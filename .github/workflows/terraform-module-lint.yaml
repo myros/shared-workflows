@@ -1,0 +1,21 @@
+on:
+  workflow_call:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout files
+      uses: actions/checkout@v3
+    - name: Set up Homebrew
+      uses: Homebrew/actions/setup-homebrew@master
+    - name: Setup Terraform
+      run: |
+        brew install tfenv 
+        tfenv install
+    - name: terraform fmt
+      run: terraform fmt -check -diff
+    - name: terraform init
+      run: terraform init
+    - name: terraform validate
+      run: terraform validate
