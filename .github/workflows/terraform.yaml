@@ -1,0 +1,33 @@
+on: 
+  workflow_call:
+    inputs:
+      upload_sarif:
+        description: Upload SARIF results to Github. Available in public repos, or private/internal repos for enterprises with Github Advanced Security.
+        type: boolean
+        default: true
+        required: false
+      main_branch:
+        description: Name of the main branch
+        type: string
+        default: main
+        required: false
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout files
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+    - name: Render terraform docs and push changes back to PR
+      uses: terraform-docs/gh-actions@v1
+      with:
+        working-dir: .
+        output-file: README.md
+        output-method: inject
+        git-push: true
+        git-push-sign-off: true
+        git-push-user-name: "github-bot"
+        git-push-user-email: "myros.net@gmail.com"
+        git-commit-message: "docs(readme): update README.md [skip ci]"
